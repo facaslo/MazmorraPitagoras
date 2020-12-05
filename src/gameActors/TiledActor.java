@@ -38,6 +38,7 @@ public class TiledActor extends Actor{
 			int mapHeight = tileHeight * numTilesVertical;
 			BaseActor.setWorldBounds(mapWidth, mapHeight);
 		tiledCamera = new OrthographicCamera(200, 150);
+		// Hola 
 		tiledMapRenderer = new OrthoCachedTiledMapRenderer(tiledMap);
 		tiledMapRenderer.setBlending(true);		
 		// tiledCamera.setToOrtho(false, windowWidth, windowHeight);
