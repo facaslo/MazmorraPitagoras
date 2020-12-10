@@ -19,16 +19,18 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 	private Viewport gameViewport;
 	private float width;
 	private float height;
+	public String nombreTma;
 	
 	
-	public BaseScreen()	{
-		mainStage = new Stage();
-		uiStage = new Stage();
+	public BaseScreen(String nombreMini)	{
 		
+		nombreTma = nombreMini;
 		width = 200;
 		height = 150;
 		gameCamera = new OrthographicCamera();
-		gameViewport = new FitViewport(width, height , gameCamera);		
+		gameViewport = new FitViewport(width, height , gameCamera);	
+		mainStage = new Stage(gameViewport);
+		uiStage = new Stage(gameViewport);	
 		initialize();		
 	}	
 	
@@ -92,5 +94,9 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 	{ return false; }
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{ return false; }
+
+
+
+
 }
 

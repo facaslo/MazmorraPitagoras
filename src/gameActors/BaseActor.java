@@ -457,7 +457,7 @@ public class BaseActor extends Actor{
 		if(!animationPaused)
 			elapsedTime += dt;
 		
-		// System.out.printf("ActorScreen: %.2f x %.2f \n" , this.getStage().getCamera().position.x, this.getStage().getCamera().position.y);
+		
 	}
 	
 	@Override

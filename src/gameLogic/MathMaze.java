@@ -3,10 +3,22 @@ package gameLogic;
 import com.badlogic.gdx.graphics.Camera;
 
 public class MathMaze extends BaseGame {
-	public void create(){
-		super.create();
-		setActiveScreen( new LevelScreen() );			
+	private static LevelScreen pantallaNivel;
+	
+	
+	
+	public void create(){		
+		super.create();			
+		pantallaNivel = new LevelScreen();
+		setActiveScreen( pantallaNivel );			
 	}	
+	
+	
+	public static LevelScreen getLevelScreen() {		
+		return pantallaNivel;
+	}
+	
+	
 	
 	
 }

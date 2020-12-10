@@ -30,22 +30,22 @@ public abstract class BaseGame extends Game{
 	public void create() 
     {        
 		// Labelstyle 
-		//labelStyle = new LabelStyle();		
-		//labelStyle.font = new BitmapFont();
+		labelStyle = new LabelStyle();		
+		labelStyle.font = new BitmapFont();
 		// Importación de fuentes
-		//FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("assets/OpenSans.ttf"));
+		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("assets/Fonts/ARCADECLASSIC.TTF"));
 		// Parámetros de fuente
-		//FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
-		/* fontParameters.size = 30;
+		FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
+		fontParameters.size = 12;
 		fontParameters.color = Color.WHITE;
 		fontParameters.borderWidth = 2;
 		fontParameters.borderColor = Color.BLACK;
 		fontParameters.borderStraight = true;
 		fontParameters.minFilter = TextureFilter.Linear;
-		fontParameters.magFilter = TextureFilter.Linear; */
+		fontParameters.magFilter = TextureFilter.Linear; 
 		// Se crea la fuente
-		//BitmapFont customFont = fontGenerator.generateFont(fontParameters);
-		//labelStyle.font = customFont;
+		BitmapFont customFont = fontGenerator.generateFont(fontParameters);
+		labelStyle.font = customFont;
 		// Preparar para multiples clases/niveles/actores. Input discreto
         InputMultiplexer im = new InputMultiplexer();
         Gdx.input.setInputProcessor( im );

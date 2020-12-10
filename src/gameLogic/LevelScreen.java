@@ -3,6 +3,7 @@ package gameLogic;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -27,15 +28,22 @@ public class LevelScreen extends BaseScreen{
 	Jugador jugador;   	
 	ArrayList<BaseActor> listaHitbox;
 	ArrayList<Puerta> listaHitboxPuertas;	
-	
+	TiledActor tma;
+	private Label label;	
 
-	@Override
-	public void initialize() {
+	public LevelScreen(){
+		super("");
+	}
+	
+	
+	@Override	
+	public void initialize() {		
 				
-		TiledActor tma = new TiledActor("assets/Map.tmx", mainStage);		
+		tma = new TiledActor("assets/Map.tmx", mainStage , true);		
 				
 		ArrayList<MapObject> listaPared = tma.getRectangleList("pared");
 		ArrayList<MapObject> listaPuertas = tma.getRectangleListContain("puerta");
+		ArrayList<MapObject> listaAntorchas = tma.getRectangleListContain("antorcha");
 		listaHitboxPuertas = new ArrayList<Puerta>();		
 		listaHitbox = new ArrayList<BaseActor>();		
 		
@@ -46,8 +54,27 @@ public class LevelScreen extends BaseScreen{
 		//System.out.println(listaHitboxPuertas);				
 		
 		jugador = new Jugador(400,100, mainStage);
-		TiledActor tma2 = new TiledActor("assets/Map2.tmx", mainStage);
+		jugador.centerAtPosition(400, 100);
+		addSpriteToMap(listaAntorchas, "antorcha" , "assets/Antorcha.png" , 1, 8);
+		TiledActor tma2 = new TiledActor("assets/Map2.tmx", mainStage, true);
+		
+		
+		label = new Label("PIXEL ART" , BaseGame.labelStyle);
+		//label.setColor(Color.WHITE);
+		//label.setPosition( 20, 20 );
+		//uiStage.addActor(label);
+		
+		
+		
+		Camera mainCamera = tma.getStage().getCamera();
+		mainCamera.viewportWidth = 200;
+		mainCamera.viewportHeight = 150;
+		
+		
 	}
+	
+	
+	
 
 	@Override
 	public void update(float dt) {
@@ -56,16 +83,19 @@ public class LevelScreen extends BaseScreen{
 				jugador.preventOverlap(wall);
 			 
 			 for (BaseActor wall : listaHitboxPuertas)
-					jugador.preventOverlap(wall);	
+				jugador.preventOverlap(wall);	
+			 
+			 // To keep camera zoom
+			 Camera mainCamera = tma.getStage().getCamera();
+			 mainCamera.viewportWidth = 200;
+			 mainCamera.viewportHeight = 150;
+			 
+			 
+			 //System.out.println(jugador.getX());
+			 // System.out.printf("width : %.2f , %.2f \n" , mainCamera.viewportWidth, mainCamera.viewportHeight);
 			 
 		
-	}
-	
-	@Override
-	public boolean scrolled(float arg0, float arg1) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	}	
 	
 	//Añadir hitboxes a los tiles y separar en puertas y muros
 	public void addHitboxestoTiles(ArrayList<MapObject> lista) {
@@ -74,7 +104,7 @@ public class LevelScreen extends BaseScreen{
 				Puerta puerta = new Puerta((float)rectangulo.getProperties().get("x"),
 						(float)rectangulo.getProperties().get("y"), mainStage);
 				puerta.setNombrePuerta((String)rectangulo.getProperties().get("name"));
-				System.out.println(puerta.getNombrePuerta());
+				//System.out.println(puerta.getNombrePuerta());
 				puerta.setBoundaryRectangle();
 				listaHitboxPuertas.add(puerta);				
 			}
@@ -91,6 +121,16 @@ public class LevelScreen extends BaseScreen{
 		}
 	}
 	
+	public void addSpriteToMap(ArrayList<MapObject> lista , String nombre, String direccionSpritesheet , int rows, int cols) {
+		for(MapObject rectangulo: lista) {
+			if(((String)rectangulo.getProperties().get("name")).contains(nombre)) {
+				BaseActor sprite = new BaseActor((float)rectangulo.getProperties().get("x"),
+						(float)rectangulo.getProperties().get("y"), mainStage);		
+				sprite.loadAnimationFromSheet(direccionSpritesheet, rows, cols, 0.1f, true);
+			}			
+		}
+	}
+	
 	public boolean keyDown(int keycode)
     {
         if ( keycode == Keys.SPACE ) {
@@ -102,19 +142,22 @@ public class LevelScreen extends BaseScreen{
         	} 	
         }
         
-        if ( keycode == Keys.A ) {
-        	MathMaze.setActiveScreen(new Tablero());
+        if ( keycode == Keys.A ) {        	
+        	MathMaze.setActiveScreen(new Minijuego("assets/tableroA1.tmx"));
+        } 
+        
+        if ( keycode == Keys.D) {
+        	this.initialize();        	
         }
         
-        
-        if ( keycode == Keys.B ) {
-        	MathMaze.setActiveScreen(new LevelScreen());
-        }
         
         
         return false;  
     }
 	
-	
-
+	@Override
+	public boolean scrolled(float arg0, float arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

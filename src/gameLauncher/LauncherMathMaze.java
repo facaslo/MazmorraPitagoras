@@ -9,8 +9,8 @@ public class LauncherMathMaze{
 	public static void main (String[] args){
 	Game myGame = new MathMaze();
 	LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-	config.width= 200;
-	config.height= 150;
+	config.width= 800;
+	config.height= 600;
 	config.title = "La mazmorra de pitágoras";
 	
 	LwjglApplication launcher =	new LwjglApplication( myGame, config ); 

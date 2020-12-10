@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="13" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
+ <layer id="1" name="Tile Layer 1" width="13" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <imagelayer id="2" name="Fondo" locked="1">
+  <image source="Tablero.png" width="208" height="160"/>
+ </imagelayer>
+ <objectgroup id="3" name="Cajas">
+  <object id="1" x="18.5" y="65.5" width="16" height="16">
+   <properties>
+    <property name="name" value="incognita"/>
+   </properties>
+  </object>
+  <object id="2" x="63.25" y="33.75" width="16" height="16">
+   <properties>
+    <property name="name" value="numeropositivo1"/>
+   </properties>
+  </object>
+  <object id="7" x="148.068" y="63.2273" width="16" height="16">
+   <properties>
+    <property name="name" value="numeronegativo1"/>
+   </properties>
+  </object>
+  <object id="8" x="63" y="94.75" width="16" height="16">
+   <properties>
+    <property name="name" value="numeropositivo1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="Mano"/>
+</map>
