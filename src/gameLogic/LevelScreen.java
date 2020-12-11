@@ -143,15 +143,9 @@ public class LevelScreen extends BaseScreen{
         }
         
         if ( keycode == Keys.A ) {        	
-        	MathMaze.setActiveScreen(new Minijuego("assets/tableroA1.tmx"));
-        } 
-        
-        if ( keycode == Keys.D) {
-        	this.initialize();        	
-        }
-        
-        
-        
+        	MathMaze.setActiveScreen(new Minijuego("assets/tableroA1.tmx", true));
+        }       
+                      
         return false;  
     }
 	

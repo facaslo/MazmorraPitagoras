@@ -2,6 +2,7 @@ package gameLogic;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -24,6 +25,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import gameActors.BaseActor;
 import gameActors.TiledActor;
 import gameActors.Carta;
+import gameActors.Cofre;
+import gameActors.Remolino;
+
 import com.badlogic.gdx.math.MathUtils;
 
 public class Minijuego extends BaseScreen{
@@ -32,24 +36,47 @@ public class Minijuego extends BaseScreen{
 	private TiledActor tma;
 	ArrayList<MapObject> listaCajasPositivas;
 	ArrayList<MapObject> listaCajasNegativas;
-	ArrayList<MapObject> incognitas;	
-	ArrayList<Carta> CartasMano;
+	ArrayList<MapObject> incognitas;
+	ArrayList<MapObject> listaCeros;
+	MapObject zonaIzquierda;
+	MapObject zonaDerecha;
+	ArrayList<Carta> cartaManoSuma;
+	ArrayList<MapObject> hitboxesCartasManoSuma;
 	
-	public Minijuego(String nombreMapa) {
+	boolean incognitaZonaIzquierda;
+	BaseActor hitboxZonaIzquierda;
+	BaseActor hitboxZonaDerecha;
+	public static ArrayList<BaseActor> BaseActors;	
+	int elementosZona;
+	
+	boolean victoria;
+	Cofre cofre;
+	
+	
+	
+	public Minijuego(String nombreMapa , boolean izquierda) {
 		super(nombreMapa);
+		incognitaZonaIzquierda = izquierda;
 	}
 	
 	
 	@Override
 	public void initialize() {		
-		tma = new TiledActor(nombreTma, mainStage , false);		
-		
+		tma = new TiledActor(nombreTma, mainStage , false);			
 		
 		// Hitboxes de cartas positivas y negativas
 		listaCajasPositivas = tma.getRectangleListContain("numeropositivo");
-		listaCajasNegativas = tma.getRectangleListContain("numeronegativo");		
+		listaCajasNegativas = tma.getRectangleListContain("numeronegativo");	
 		incognitas = tma.getRectangleList("incognita");
-		CartasMano = new ArrayList<Carta>();
+		listaCeros = tma.getRectangleListContain("cero");
+		zonaIzquierda = tma.getRectangleList("zonaIzquierda").get(0);
+		zonaDerecha = tma.getRectangleList("zonaDerecha").get(0);
+		
+		hitboxesCartasManoSuma = tma.getRectangleListContain("cartaManoSuma");
+		cartaManoSuma = new ArrayList<Carta>();
+		
+		BaseActors = new ArrayList<BaseActor>();
+		
 		
 		Camera mainCamera = tma.getStage().getCamera();
 		mainCamera.viewportWidth = 208;
@@ -57,13 +84,26 @@ public class Minijuego extends BaseScreen{
 		mainCamera.position.x= 104;
 		mainCamera.position.y= 80;	
 		
+		// Crear las zonas del tablero
+				hitboxZonaIzquierda = new BaseActor((float)zonaIzquierda.getProperties().get("x"), 
+						(float)zonaIzquierda.getProperties().get("y"), mainStage);
+				hitboxZonaIzquierda.setWidth((float)zonaIzquierda.getProperties().get("width"));
+				hitboxZonaIzquierda.setHeight((float)zonaIzquierda.getProperties().get("height"));
+				hitboxZonaIzquierda.setBoundaryRectangle();
+				
+				hitboxZonaDerecha = new BaseActor((float)zonaDerecha.getProperties().get("x"), 
+						(float)zonaDerecha.getProperties().get("y"), mainStage);
+				hitboxZonaDerecha.setWidth((float)zonaDerecha.getProperties().get("width"));
+				hitboxZonaDerecha.setHeight((float)zonaDerecha.getProperties().get("height"));
+				hitboxZonaDerecha.setBoundaryRectangle();
+		
 				
 		// Se colocan las incognitas
 		for (int i=0; i<incognitas.size(); i++) {
-			Carta nuevaCarta = new Carta((float)incognitas.get(i).getProperties().get("x"),
+			cofre = new Cofre((float)incognitas.get(i).getProperties().get("x"),
 					(float)incognitas.get(i).getProperties().get("y"),					
-					mainStage, false, 
-					"assets/Boxes/cofreTesoro/cofreTesoro1.png");	
+					mainStage ) ;		
+			BaseActors.add(cofre);
 		}
 		
 		
@@ -74,7 +114,8 @@ public class Minijuego extends BaseScreen{
 					(float)listaCajasPositivas.get(i).getProperties().get("y"),					
 					mainStage, false, 
 					"assets/Boxes/monstersPositive/MonsterPositive"+ Integer.toString(random) + ".png");
-			CartasMano.add(nuevaCarta);
+			cartaManoSuma.add(nuevaCarta);
+			BaseActors.add(nuevaCarta);
 		}		
 		
 		//Cargar sprites de las cartas negativas
@@ -84,10 +125,41 @@ public class Minijuego extends BaseScreen{
 					(float)listaCajasNegativas.get(i).getProperties().get("y"),					
 					mainStage, false, 
 					"assets/Boxes/monstersNegative/MonsterNegative"+ Integer.toString(random) + ".png");
-			CartasMano.add(nuevaCarta);
+			cartaManoSuma.add(nuevaCarta);
+			BaseActors.add(nuevaCarta);
 		}	
 		
+		//Cargar los sprites del cero
+		for (int i=0; i<listaCeros.size(); i++) {			
+			Remolino remolino = new Remolino((float)listaCeros.get(i).getProperties().get("x"),
+					(float)listaCeros.get(i).getProperties().get("y"),					
+					mainStage);
+			BaseActors.add(remolino);
+					
+		}	
 		
+		// Cargar las cartas en mano de suma
+		for (int i=0; i<hitboxesCartasManoSuma.size(); i++) {
+			if (cartaManoSuma.get(i).getNombreCarta().contains("monstersNegative/MonsterNegative")) {
+				String nuevoNombre = cartaManoSuma.get(i).getNombreCarta().replaceAll("monstersNegative/MonsterNegative", 
+						"monstersPositive/MonsterPositive");
+				Carta nuevaCarta = new Carta((float)hitboxesCartasManoSuma.get(i).getProperties().get("x"), 
+						(float)hitboxesCartasManoSuma.get(i).getProperties().get("y"),
+						mainStage, true, nuevoNombre);
+				BaseActors.add(nuevaCarta);	
+			}
+			else if (cartaManoSuma.get(i).getNombreCarta().contains("monstersPositive/MonsterPositive")) {
+				String nuevoNombre = cartaManoSuma.get(i).getNombreCarta().replaceAll("monstersPositive/MonsterPositive", 
+						"monstersNegative/MonsterNegative");
+				Carta nuevaCarta = new Carta((float)hitboxesCartasManoSuma.get(i).getProperties().get("x"), 
+						(float)hitboxesCartasManoSuma.get(i).getProperties().get("y"),
+						mainStage, true, nuevoNombre);
+				BaseActors.add(nuevaCarta);	
+			}
+		}
+		
+		
+				
 		
 	}
 	
@@ -95,6 +167,8 @@ public class Minijuego extends BaseScreen{
 	public void resetTablero() {
 		initialize();
 	}
+	
+	
 	
 
 	@Override
@@ -105,6 +179,53 @@ public class Minijuego extends BaseScreen{
 		mainCamera.position.x= 104;
 		mainCamera.position.y= 80;	
 		
+		// Verificamos si las cartas coinciden
+		try {
+			String nombreCartaA = Carta.getCartasClicked().get(0).getNombreCarta();
+			String nombreCartaB = Carta.getCartasClicked().get(1).getNombreCarta();
+			String numeroCartaA = nombreCartaA.replaceAll("[^0-9]", "");
+			String numeroCartaB = nombreCartaB.replaceAll("[^0-9]", "");			
+			
+			if(numeroCartaA.equals(numeroCartaB)) {
+				if(nombreCartaA.contains("monstersPositive") && nombreCartaB.contains("monstersNegative") ||
+				nombreCartaB.contains("monstersPositive") && nombreCartaA.contains("monstersNegative")	) {
+				Carta.getCartasClicked().get(0).remove();
+				Carta.getCartasClicked().get(1).remove();
+				BaseActors.remove(Carta.getCartasClicked().get(0));
+				BaseActors.remove(Carta.getCartasClicked().get(1));
+				Carta.cleanCartasClicked();				
+				}
+			}
+		}
+		catch(Exception e) {
+			// System.out.println(Carta.getCartasClicked());
+		}
+		
+		
+		elementosZona = 0;
+		
+		for (BaseActor actor: BaseActors) {		
+			if (incognitaZonaIzquierda) {
+				if (hitboxZonaIzquierda.overlaps(actor)) {				
+					elementosZona++;			
+				}
+			}else {
+				if (hitboxZonaDerecha.overlaps(actor)) {				
+					elementosZona++;										
+				}
+			}			
+		}
+		
+			
+		// Verificar si se puede avanzar de nivel
+		if(elementosZona == 1) {
+			cofre.setCofreAbierto(true);		
+		}
+		
+		
+		
+		
+		
 	}
 	
 	@Override
@@ -113,7 +234,7 @@ public class Minijuego extends BaseScreen{
 		return false;
 	}
 	
-	
+	@Override
 	public boolean keyDown(int keycode)
     {               
         
@@ -122,8 +243,7 @@ public class Minijuego extends BaseScreen{
         }
         
         if ( keycode == Keys.C) {
-        	// MathMaze.setActiveScreen(new Minijuego("assets/tableroA2.tmx"));
-        	resetTablero();
+        	MathMaze.setActiveScreen(new Minijuego("assets/tableroA2.tmx", true));        	
         }        
         
         

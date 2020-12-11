@@ -1,12 +1,9 @@
 package gameLogic;
 
-import com.badlogic.gdx.graphics.Camera;
-
 public class MathMaze extends BaseGame {
-	private static LevelScreen pantallaNivel;
+	private static LevelScreen pantallaNivel;	
 	
-	
-	
+	@Override
 	public void create(){		
 		super.create();			
 		pantallaNivel = new LevelScreen();

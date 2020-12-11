@@ -8,34 +8,38 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.Input.Keys;
+import java.util.ArrayList;
+
 
 public class Carta extends BaseActor{
-	boolean enMano;
-	boolean hovered;	
-	boolean clicked;
-	float ancho;
-	Camera gameCamera;
+	private static ArrayList<Carta> cartasClicked;
+	private boolean enMano;		
+	private boolean clicked;	
+	private String nombre;	
 	
 	public Carta(float x, float y, Stage s , boolean mano , String name) {
 		super(x, y, s);
-		enMano = mano;
-		hovered = false;
-		clicked = false;
-		ancho = 16f;
+		enMano = mano;		
+		clicked = false;	
+		nombre = name;
+		cartasClicked = new ArrayList<Carta>();
 		
+		loadTexture(name);		
+		this.setBoundaryRectangle();
 		
-		loadTexture(name);
-		gameCamera = this.getStage().getCamera();		
-		
-		
-		// Evento entrada y salida del mouse
-		this.addListener(new ClickListener() {  			
-			
+		/*----------------------------------------------------------------------------------------------- */
+		// Eventos del mouse con las cartas
+		this.addListener(new ClickListener(Buttons.LEFT) {  			
+			// Evento de entrada del mouse 
 			@Override
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 				/* Vector3 tmpCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -45,7 +49,7 @@ public class Carta extends BaseActor{
                 
                 seleccionar(0.15f);             
             }	
-			
+			// Evento salida del mouse
 			@Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
 				/* Vector3 tmpCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -57,26 +61,79 @@ public class Carta extends BaseActor{
                 	removerAnimacion();                   
                 }
             }
-			
+			// Evento click
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click();
+							
 			}
 			
         });
+		/*----------------------------------------------------------------------------------------------- */
 		
-		
+		// Eventos para las tarjetas de la mano
+		if(enMano) {
+			// Eventos de arrastre 
+			this.addListener(new DragListener() {
+				@Override
+			    public void drag(InputEvent event, float x, float y, int pointer) {
+			    	removerAnimacion();			    	
+			    	moveBy(x - getWidth() / 2, y - getHeight() / 2);				    	
+			    }
+			    
+				@Override
+			    public void dragStop(InputEvent event, float x, float y, int pointer) {
+			    	removerAnimacion();
+			    	click();
+			    }
+			});
+			
+			// Para cambiar el color de la carta pulsando botón derecho
+			this.addListener(new ClickListener(Buttons.RIGHT)
+			{
+			    @Override
+			    public void clicked(InputEvent event, float x, float y)
+			    {
+			    	if (nombre.contains("monstersNegative/MonsterNegative")) {
+			    		removeAnimation();
+			    		String nuevoNombre = nombre.replaceAll("monstersNegative/MonsterNegative", 
+			    				"monstersPositive/MonsterPositive");
+			    		nombre = nuevoNombre;
+			    		System.out.println("Cambiar textura");
+			    		loadTexture(nuevoNombre);
+			    	}
+			    	
+			    	else if (nombre.contains("monstersPositive/MonsterPositive")) {
+			    		removeAnimation();
+			    		String nuevoNombre = nombre.replaceAll("monstersPositive/MonsterPositive", 
+			    				"monstersNegative/MonsterNegative");
+			    		nombre = nuevoNombre;
+			    		System.out.println("Cambiar textura");
+			    		loadTexture(nuevoNombre);
+			    	}
+			    		
+			    }
+			});
+		}	
+		/*----------------------------------------------------------------------------------------------- */
 	}	
-	
-	
-	public void act(float dt){
-		super.act(dt);	
-		
-	}
 	
 	public void setEnMano(boolean valor) {
 		enMano = valor;
 	}	
+	
+	public String getNombreCarta() {
+		return nombre;
+	}
+	
+	public static ArrayList<Carta> getCartasClicked(){
+		return cartasClicked;
+	}
+	
+	public static void cleanCartasClicked(){
+		cartasClicked.clear();
+	}
+	
 	
 	
 	// Animación para cuando el mouse entre en la carta
@@ -94,23 +151,24 @@ public class Carta extends BaseActor{
 		this.setScale(1);
 	}
 	
+	// Animación para cuando se hace click sobre una carta
 	public void click() {		
-		if (!clicked) {
+		if (!clicked && cartasClicked.size() <= 1) {
 			removerAnimacion();
 			seleccionar(0.3f);
-			clicked = true;		
+			clicked = true;			
+			cartasClicked.add(this);
 		}
-		else {
+		else if (clicked) {
 			removerAnimacion();
 			this.setScale(1);
-			clicked = false;
-		}
-		
-		/* Action crecer = Actions.scaleBy(0.2f, 0.2f, 0.2f);
-		this.addAction(crecer); */
+			clicked = false;	
+			cartasClicked.remove(this);
+		}		
 	}
 
-	
-	
-
+	@Override
+	public void act(float dt){
+		super.act(dt);		
+	}
 }

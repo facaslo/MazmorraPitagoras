@@ -268,6 +268,8 @@ public class BaseActor extends Actor{
 		boundaryPolygon = new Polygon(vertices);
 	}
 	
+	
+	
 	// Para crear hitbox poligonales
 	public void setBoundaryPolygon(int numSides)
 	{
@@ -311,11 +313,12 @@ public class BaseActor extends Actor{
 		 * Si no lo hacen, no lo harán las regiones poligonales internas 
 		 * */
 			if ( !poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()) )
-			return false;
+				return false;
 		// El método verifica si dos polígonos convexos se intersectan 
 		return Intersector.overlapConvexPolygons( poly1, poly2 );
 	}
 	
+		
 	// Para evitar que dos objetos se sobrepongan
 	public Vector2 preventOverlap(BaseActor other)	{
 		/* Se cargan los polígonos de los dos actores 
