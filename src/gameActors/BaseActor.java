@@ -476,4 +476,6 @@ public class BaseActor extends Actor{
 					getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
 		}
 	}
+	
+
 }

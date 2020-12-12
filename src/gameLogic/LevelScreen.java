@@ -32,7 +32,7 @@ public class LevelScreen extends BaseScreen{
 	private Label label;	
 
 	public LevelScreen(){
-		super("");
+		super("" , 0 , 0 , true);
 	}
 	
 	
@@ -67,8 +67,8 @@ public class LevelScreen extends BaseScreen{
 		
 		
 		Camera mainCamera = tma.getStage().getCamera();
-		mainCamera.viewportWidth = 200;
-		mainCamera.viewportHeight = 150;
+		mainCamera.viewportWidth = 208;
+		mainCamera.viewportHeight = 160;
 		
 		
 	}
@@ -87,8 +87,8 @@ public class LevelScreen extends BaseScreen{
 			 
 			 // To keep camera zoom
 			 Camera mainCamera = tma.getStage().getCamera();
-			 mainCamera.viewportWidth = 200;
-			 mainCamera.viewportHeight = 150;
+			 mainCamera.viewportWidth = 208;
+			 mainCamera.viewportHeight = 160;
 			 
 			 
 			 //System.out.println(jugador.getX());
@@ -143,7 +143,7 @@ public class LevelScreen extends BaseScreen{
         }
         
         if ( keycode == Keys.A ) {        	
-        	MathMaze.setActiveScreen(new Minijuego("assets/tableroA1.tmx", true));
+        	MathMaze.setActiveScreen(new Minijuego("A", 1, 6, true));
         }       
                       
         return false;  

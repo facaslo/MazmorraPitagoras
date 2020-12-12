@@ -1,43 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="13" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
- <layer id="1" name="Tile Layer 1" width="13" height="10">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="13" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="28">
+ <tileset firstgid="1" name="incognita" tilewidth="16" tileheight="16" tilecount="3" columns="3">
+  <image source="Boxes/Incognita/incognita.png" width="48" height="16"/>
+ </tileset>
  <imagelayer id="2" name="Fondo" locked="1">
   <image source="Tablero.png" width="208" height="160"/>
  </imagelayer>
+ <imagelayer id="5" name="UI" locked="1">
+  <image source="uiTablero.png" width="208" height="160"/>
+ </imagelayer>
+ <objectgroup id="4" name="Zonas">
+  <object id="14" x="9.02083" y="23.9706" width="88.9688" height="85.9981">
+   <properties>
+    <property name="name" value="zonaIzquierda"/>
+   </properties>
+  </object>
+  <object id="15" x="110.022" y="24.0104" width="88.9882" height="86.0102">
+   <properties>
+    <property name="name" value="zonaDerecha"/>
+   </properties>
+  </object>
+  <object id="21" x="137.781" y="117.554" width="11" height="14">
+   <properties>
+    <property name="name" value="botonLimpiarCartas"/>
+   </properties>
+  </object>
+  <object id="22" x="183.909" y="4.56676" width="15" height="15">
+   <properties>
+    <property name="name" value="botonReinicio"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="3" name="Cajas">
-  <object id="1" x="18.5" y="65.5" width="16" height="16">
+  <properties>
+   <property name="name" value="levelLabel"/>
+  </properties>
+  <object id="1" x="16.6818" y="39.5682" width="16" height="16">
    <properties>
     <property name="name" value="incognita"/>
    </properties>
   </object>
-  <object id="2" x="63.25" y="33.75" width="16" height="16">
+  <object id="2" x="64" y="64" width="16" height="16">
    <properties>
     <property name="name" value="numeropositivo1"/>
    </properties>
   </object>
-  <object id="7" x="148.068" y="63.2273" width="16" height="16">
+  <object id="7" x="124.818" y="40.75" width="16" height="16">
    <properties>
     <property name="name" value="numeronegativo1"/>
    </properties>
   </object>
-  <object id="8" x="63" y="94.75" width="16" height="16">
+  <object id="11" x="77.0476" y="134.958" width="16" height="16">
    <properties>
-    <property name="name" value="numeropositivo1"/>
+    <property name="name" value="cartaManoSuma"/>
+   </properties>
+  </object>
+  <object id="12" x="57.976" y="135.021" width="16" height="16">
+   <properties>
+    <property name="name" value="cartaManoSuma"/>
+   </properties>
+  </object>
+  <object id="16" x="95.9972" y="135" width="16" height="16">
+   <properties>
+    <property name="name" value="cartaManoSuma"/>
+   </properties>
+  </object>
+  <object id="17" x="114.997" y="135" width="15.9924" height="16">
+   <properties>
+    <property name="name" value="cartaManoSuma"/>
+   </properties>
+  </object>
+  <object id="18" x="134" y="135" width="16" height="16">
+   <properties>
+    <property name="name" value="cartaManoProducto"/>
+   </properties>
+  </object>
+  <object id="19" x="84.9622" y="117.014" width="16" height="16">
+   <properties>
+    <property name="name" value="cartaElegida1"/>
+   </properties>
+  </object>
+  <object id="20" x="107" y="117" width="16" height="16">
+   <properties>
+    <property name="name" value="cartaElegida2"/>
+   </properties>
+  </object>
+  <object id="23" x="63.75" y="36.25" width="16" height="16">
+   <properties>
+    <property name="name" value="cero"/>
+   </properties>
+  </object>
+  <object id="25" x="70.2443" y="8.13068" width="68.8182" height="8.90909">
+   <properties>
+    <property name="name" value="levelLabel"/>
+   </properties>
+  </object>
+  <object id="27" x="25.4545" y="67.0909" width="16" height="16">
+   <properties>
+    <property name="name" value="numeropositivo2"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="4" name="Mano"/>
 </map>

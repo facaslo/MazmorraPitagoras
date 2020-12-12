@@ -21,8 +21,8 @@ import java.util.Iterator;
 
 public class TiledActor extends Actor{
 // window dimensions
-	public static int windowWidth = 200;
-	public static int windowHeight = 150;
+	public static int windowWidth = 208;
+	public static int windowHeight = 160;
 	private TiledMap tiledMap;
 	private OrthographicCamera tiledCamera;
 	private OrthoCachedTiledMapRenderer tiledMapRenderer;

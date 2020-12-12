@@ -1,5 +1,6 @@
 package gameLogic;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,16 +18,24 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 	protected Stage uiStage;		
 	public OrthographicCamera gameCamera;
 	private Viewport gameViewport;
+	 
 	private float width;
 	private float height;
-	public String nombreTma;
+	public String letraTablero;
+	public int numeroTablero;
+	public int tablerosTotales;
+	public boolean izquierda;
 	
 	
-	public BaseScreen(String nombreMini)	{
+	
+	public BaseScreen(String letraTab, int noTablero, int tabTotales, boolean izq)	{
 		
-		nombreTma = nombreMini;
-		width = 200;
-		height = 150;
+		letraTablero = letraTab;
+		numeroTablero = noTablero; 
+		tablerosTotales = tabTotales;
+		izquierda = izq;
+		width = 208;
+		height = 160;
 		gameCamera = new OrthographicCamera();
 		gameViewport = new FitViewport(width, height , gameCamera);	
 		mainStage = new Stage(gameViewport);

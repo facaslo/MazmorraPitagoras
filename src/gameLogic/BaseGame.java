@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -32,20 +33,25 @@ public abstract class BaseGame extends Game{
 		// Labelstyle 
 		labelStyle = new LabelStyle();		
 		labelStyle.font = new BitmapFont();
+		/*Texture texture = new Texture(Gdx.files.internal("assets/Fonts/Arcade.png"), true);
+		texture.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.MipMapLinearLinear);
+		labelStyle.font = new BitmapFont(Gdx.files.internal("assets/Fonts/Arcade.fnt"), new TextureRegion(texture) , false);
+		*/
+		
+		 labelStyle.font = new BitmapFont();
 		// Importación de fuentes
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("assets/Fonts/ARCADECLASSIC.TTF"));
 		// Parámetros de fuente
 		FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
-		fontParameters.size = 12;
-		fontParameters.color = Color.WHITE;
-		fontParameters.borderWidth = 2;
-		fontParameters.borderColor = Color.BLACK;
-		fontParameters.borderStraight = true;
+		fontParameters.size = 24;
+		fontParameters.color = Color.PURPLE;	
 		fontParameters.minFilter = TextureFilter.Linear;
 		fontParameters.magFilter = TextureFilter.Linear; 
+		
 		// Se crea la fuente
 		BitmapFont customFont = fontGenerator.generateFont(fontParameters);
 		labelStyle.font = customFont;
+			
 		// Preparar para multiples clases/niveles/actores. Input discreto
         InputMultiplexer im = new InputMultiplexer();
         Gdx.input.setInputProcessor( im );
@@ -63,6 +69,9 @@ public abstract class BaseGame extends Game{
 	// Para cambiar la pantalla que se está mostrando 
 	public static void setActiveScreen(BaseScreen s)
 	{
-		game.setScreen(s);
+		game.setScreen(s);		
 	}
+	
+	
+	
 }
