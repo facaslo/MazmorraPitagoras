@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import gameActors.BaseActor;
 import gameActors.TiledActor;
 import gameActors.Carta;
 import gameActors.Cofre;
+import gameActors.Jugador;
 import gameActors.Remolino;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -37,13 +39,28 @@ import com.badlogic.gdx.math.MathUtils;
 public class Minijuego extends BaseScreen{
 	
 	String nombreTablero;
-	private TiledActor tma;
-	Label numeroNivel;
+	private TiledActor tma;	
+	boolean izquierda;
 	
 	/*Elementos de la ui */
+	Label numeroNivel;
 	MapObject rectanguloBotonLimpiarCartas;
+	Button botonLimpiarCartas;
 	MapObject rectanguloBotonReinicio;
-	MapObject rectanguloLabelNivel;
+	Button botonReinicio;
+	MapObject rectanguloBotonCerrar;
+	Button botonCerrar;	
+	MapObject rectanguloBotonAtras;
+	Button botonAtras;
+	MapObject rectanguloLabelNivel;	
+	
+	BaseActor fondoPulsarBoton;
+	Label pregunta;
+	TextButton botonSi;
+	String modoBotonSi; 
+	TextButton botonNo;
+	String modoBotonNo;
+	
 	/*Listas de rectangulos obtenidos del tiled map */
 	ArrayList<MapObject> listaCajasPositivas;
 	ArrayList<MapObject> listaCajasNegativas;
@@ -52,8 +69,7 @@ public class Minijuego extends BaseScreen{
 	ArrayList<MapObject> listaCeros;
 	MapObject zonaIzquierda;
 	MapObject zonaDerecha;
-	/*Elementos de las cartas arrastrables*/
-	boolean incognitaZonaIzquierda;
+	/*Elementos de las cartas arrastrables*/	
 	BaseActor hitboxZonaIzquierda;
 	BaseActor hitboxZonaDerecha;
 	/*Las cartas del tablero*/
@@ -66,20 +82,19 @@ public class Minijuego extends BaseScreen{
 	BaseActor cartaSeleccionadaIzquierda;
 	BaseActor cartaSeleccionadaDerecha;	
 	
-	
 	boolean victoria;
 	Cofre cofre;
 	
 	
 	
-	public Minijuego(String letraTab , int noTablero, int tabTotales, boolean izquierda) {
-		super(letraTab, noTablero, tabTotales, izquierda);			
+	public Minijuego(Cofre cofre, String letraTab , int noTablero, int tabTotales) {
+		super(cofre, letraTab, noTablero, tabTotales);			
 	}
 	
 	
 	@Override
 	public void initialize() {	
-		nombreTablero = String.format("assets/tablero%s%d.tmx", letraTablero, numeroTablero);
+		nombreTablero = String.format("assets/Tablero%s%d.tmx", letraTablero, numeroTablero);
 		tma = new TiledActor(nombreTablero, mainStage , false);
 		
 		Camera mainCamera = tma.getStage().getCamera();
@@ -112,22 +127,28 @@ public class Minijuego extends BaseScreen{
 						(float)zonaIzquierda.getProperties().get("y"), mainStage);
 				hitboxZonaIzquierda.setWidth((float)zonaIzquierda.getProperties().get("width"));
 				hitboxZonaIzquierda.setHeight((float)zonaIzquierda.getProperties().get("height"));
-				hitboxZonaIzquierda.setBoundaryRectangle();
+				hitboxZonaIzquierda.setBoundaryRectangle();				
 				
 				hitboxZonaDerecha = new BaseActor((float)zonaDerecha.getProperties().get("x"), 
 						(float)zonaDerecha.getProperties().get("y"), mainStage);
 				hitboxZonaDerecha.setWidth((float)zonaDerecha.getProperties().get("width"));
 				hitboxZonaDerecha.setHeight((float)zonaDerecha.getProperties().get("height"));
 				hitboxZonaDerecha.setBoundaryRectangle();
-		
+						
 				
 		// Se colocan las incognitas		
 		incognita = new Cofre((float)objetoIncognita.getProperties().get("x"),
 				(float)objetoIncognita.getProperties().get("y"),					
-				mainStage ) ;		
-		BaseActors.add(incognita);
+				mainStage, true) ;		
+		BaseActors.add(incognita);	
 		
-		
+
+		if(hitboxZonaIzquierda.overlaps(incognita)) {
+			izquierda = true;
+		}
+		else {
+			izquierda = false;
+		}
 		
 		//Cargar sprites de las cartas positivas
 		for (int i=0; i<listaCajasPositivas.size(); i++) {	
@@ -333,16 +354,111 @@ public class Minijuego extends BaseScreen{
 		
 		// Elementos de la UI
 		// Label de nivel
-				String cadena = String.format("Nivel %d  de  %d", numeroTablero , tablerosTotales);
-				numeroNivel = new Label(cadena, BaseGame.labelStyle);
-				// 11 font
-				rectanguloLabelNivel = tma.getRectangleList("levelLabel").get(0);
-					 
-				//numeroNivel.setPosition(0,0);
-				numeroNivel.setFontScale(0.37f);		
-				numeroNivel.setPosition((float)rectanguloLabelNivel.getProperties().get("x"),
-						(float)rectanguloLabelNivel.getProperties().get("y")-numeroNivel.getHeight()*numeroNivel.getFontScaleX());
-				uiStage.addActor(numeroNivel);
+		String cadena = String.format("Nivel %d de %d", numeroTablero , tablerosTotales);
+		numeroNivel = new Label(cadena, BaseGame.labelStyle);		
+		rectanguloLabelNivel = tma.getRectangleList("levelLabel").get(0);		
+		numeroNivel.setFontScale(0.45f);		
+		numeroNivel.setPosition((float)rectanguloLabelNivel.getProperties().get("x"),
+				(float)rectanguloLabelNivel.getProperties().get("y") -numeroNivel.getHeight()*numeroNivel.getFontScaleX()/1.5f);
+		uiStage.addActor(numeroNivel);
+		
+		// Botones de texto para las preguntas salir,reiniciar y atras
+		botonSi = new TextButton( "Si", BaseGame.textButtonStyle );
+		botonSi.getLabel().setFontScale(0.40f);
+		botonSi.addListener(new ClickListener() {
+			// Evento de entrada del mouse 
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+												
+                super.enter(event, x , y, pointer, fromActor);
+        		botonSi.setColor(Color.YELLOW);
+                          
+            }	
+			// Evento salida del mouse
+			@Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {							
+                super.exit(event, x, y, pointer, toActor);
+                
+                if (pointer == -1) {                	  
+            		botonSi.setColor(1,1,1,1);
+                }
+            }
+			
+			@Override					
+			public void clicked(InputEvent event, float x, float y) {
+				if (modoBotonSi.equals("Salir")) {
+					MazmorraPitagoras.setActiveScreen(MazmorraPitagoras.getLevelScreen());
+				}
+				else if (modoBotonSi.equals("Reiniciar")) {					
+					initialize();
+					fondoPulsarBoton.remove();
+					uiTable.clear();
+					uiTable.remove();
+				}
+				else if (modoBotonSi.equals("Atras")) {
+					MazmorraPitagoras.setActiveScreen(new Minijuego(cofreUsado, letraTablero, numeroTablero-1, tablerosTotales));
+				}
+				else if (modoBotonSi.equals("Avanzar")) {
+					MazmorraPitagoras.setActiveScreen(new Minijuego(cofreUsado, letraTablero, numeroTablero+1, tablerosTotales));
+				}
+				else if (modoBotonSi.equals("RecogerLlave")) {
+					Jugador.setNumeroLlaves(Jugador.getNumeroLlaves()+1);
+					MazmorraPitagoras.setActiveScreen(MazmorraPitagoras.getLevelScreen());
+					cofreUsado.abrirCofreMesa();
+				}
+			}
+		});
+		
+		
+		botonNo = new TextButton( "No", BaseGame.textButtonStyle );
+		botonNo.getLabel().setFontScale(0.40f);
+		botonNo.addListener(new ClickListener() {
+			// Evento de entrada del mouse 
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+												
+                super.enter(event, x , y, pointer, fromActor);
+                botonNo.setColor(Color.YELLOW);
+                          
+            }	
+			// Evento salida del mouse
+			@Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+							
+                super.exit(event, x, y, pointer, toActor);
+                
+                if (pointer == -1) {                	  
+                	botonNo.setColor(1,1,1,1);
+                }
+            }
+			
+			public void clicked(InputEvent event, float x, float y) {
+				if (modoBotonNo.equals("Salir")) {
+					fondoPulsarBoton.remove();
+					uiTable.clear();
+					uiTable.remove();
+				}
+				else if (modoBotonNo.equals("Reiniciar")) {					
+					fondoPulsarBoton.remove();
+					uiTable.clear();
+					uiTable.remove();
+				}
+				
+				else if (modoBotonNo.equals("Atras")) {
+					fondoPulsarBoton.remove();
+					uiTable.clear();
+					uiTable.remove();
+				}
+				
+				else if (modoBotonNo.equals("Avanzar")) {
+					initialize();
+					fondoPulsarBoton.remove();
+					uiTable.clear();
+					uiTable.remove();
+				}
+			}
+		});
+		
 		//Botón para limpiar cartas
 		ButtonStyle estiloLimpiarCartas = new ButtonStyle();
 		Texture texturaLimpiarCartas = new Texture(Gdx.files.internal("assets/Botones/botonLimpiarCartas.png"));
@@ -350,7 +466,7 @@ public class Minijuego extends BaseScreen{
 		estiloLimpiarCartas.up = new TextureRegionDrawable(regionLimpiarCartas);		
 		
 		rectanguloBotonLimpiarCartas = tma.getRectangleList("botonLimpiarCartas").get(0);
-		Button botonLimpiarCartas = new Button(estiloLimpiarCartas);
+		botonLimpiarCartas = new Button(estiloLimpiarCartas);
 		botonLimpiarCartas.setPosition((float)rectanguloBotonLimpiarCartas.getProperties().get("x"), 
 				(float)rectanguloBotonLimpiarCartas.getProperties().get("y"));			
 		uiStage.addActor(botonLimpiarCartas);
@@ -394,13 +510,14 @@ public class Minijuego extends BaseScreen{
 			}
 		});		
 		
+		// Botón para reiniciar el tablero
 		ButtonStyle estiloReinicio = new ButtonStyle();
 		Texture texturaReinicio = new Texture(Gdx.files.internal("assets/Botones/botonReset.png"));
 		TextureRegion regionReinicio = new TextureRegion(texturaReinicio);
 		estiloReinicio.up = new TextureRegionDrawable(regionReinicio);		
 		
 		rectanguloBotonReinicio = tma.getRectangleList("botonReinicio").get(0);
-		Button botonReinicio = new Button(estiloReinicio);
+		botonReinicio = new Button(estiloReinicio);
 		botonReinicio.setPosition((float)rectanguloBotonReinicio.getProperties().get("x"), 
 				(float)rectanguloBotonReinicio.getProperties().get("y"));			
 		uiStage.addActor(botonReinicio);
@@ -427,13 +544,208 @@ public class Minijuego extends BaseScreen{
 			// Borrar las cartas seleccionadas cuando no se han usado las dos simultaneamente
 			@Override					
 			public void clicked(InputEvent event, float x, float y) {
-				resetTablero();										
+				fondoPulsarBoton = new BaseActor(0,0,uiStage);
+				fondoPulsarBoton.loadTexture("assets/Botones/fondoPresionarBoton.png"); 				
+				
+				pregunta = new Label("Deseas reiniciar el nivel?" , BaseGame.labelStyle);				
+				pregunta.setFontScale(0.5f);				
+				
+									
+				uiTable.add(pregunta).colspan(2);
+				uiTable.row().pad(30, 0, 0, 10);				
+				uiTable.add(botonSi);				
+				uiTable.add(botonNo);	
+				
+				modoBotonSi = "Reiniciar";
+				modoBotonNo = "Reiniciar";				
+				
+				uiStage.addActor(uiTable);				
+			}
+		});		
+		
+		// Botón para cerrar el tablero
+		ButtonStyle estiloCerrar = new ButtonStyle();
+		Texture texturaCerrar = new Texture(Gdx.files.internal("assets/Botones/botonSalir.png"));
+		TextureRegion regionCerrar = new TextureRegion(texturaCerrar);
+		estiloCerrar.up = new TextureRegionDrawable(regionCerrar);	
+		
+		rectanguloBotonCerrar = tma.getRectangleList("botonCerrar").get(0);
+		botonCerrar = new Button(estiloCerrar);
+		botonCerrar.setPosition((float)rectanguloBotonCerrar.getProperties().get("x"), 
+				(float)rectanguloBotonCerrar.getProperties().get("y"));			
+		uiStage.addActor(botonCerrar);
+		
+		botonCerrar.addListener(new ClickListener() {
+			// Evento de entrada del mouse 
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+												
+                super.enter(event, x , y, pointer, fromActor);
+                botonCerrar.setColor(Color.GREEN);
+                          
+            }	
+			// Evento salida del mouse
+			@Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+							
+                super.exit(event, x, y, pointer, toActor);
+                
+                if (pointer == -1) {                	  
+                	botonCerrar.setColor(1,1,1,1);
+                }
+            }
+			
+			@Override					
+			public void clicked(InputEvent event, float x, float y) {
+				fondoPulsarBoton = new BaseActor(0,0,uiStage);
+				fondoPulsarBoton.loadTexture("assets/Botones/fondoPresionarBoton.png"); 				
+				
+				pregunta = new Label("Deseas salir?" , BaseGame.labelStyle);				
+				pregunta.setFontScale(0.5f);				
+				
+									
+				uiTable.add(pregunta).colspan(2);
+				uiTable.row().pad(30, 0, 0, 10);				
+				uiTable.add(botonSi);				
+				uiTable.add(botonNo);	
+				
+				modoBotonSi = "Salir";
+				modoBotonNo = "Salir";				
+				
+				uiStage.addActor(uiTable);				
 			}
 		});		
 		
 		
+		
+		// Botón para volver atrás
+		ButtonStyle estiloAtras = new ButtonStyle();
+		Texture texturaAtras = new Texture(Gdx.files.internal("assets/Botones/botonAtras.png"));
+		TextureRegion regionAtras = new TextureRegion(texturaAtras);
+		estiloAtras.up = new TextureRegionDrawable(regionAtras);	
+		
+		rectanguloBotonAtras = tma.getRectangleList("botonAtras").get(0);
+		botonAtras = new Button(estiloAtras);
+		botonAtras.setPosition((float)rectanguloBotonAtras.getProperties().get("x"), 
+				(float)rectanguloBotonAtras.getProperties().get("y"));			
+		uiStage.addActor(botonAtras);		
+		
+		
+		botonAtras.addListener(new ClickListener() {
 			
-	}
+			// Evento de entrada del mouse 
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+												
+                super.enter(event, x , y, pointer, fromActor);
+                if (numeroTablero > 1)
+                	botonAtras.setColor(Color.GREEN);
+                          
+            }	
+			// Evento salida del mouse
+			@Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {							
+                super.exit(event, x, y, pointer, toActor);                
+                if (pointer == -1 && numeroTablero > 1) {                	  
+                	botonAtras.setColor(1,1,1,1);
+                }
+            }
+				
+			
+			@Override					
+			public void clicked(InputEvent event, float x, float y) {
+				if (numeroTablero > 1) {
+					fondoPulsarBoton = new BaseActor(0,0,uiStage);
+					fondoPulsarBoton.loadTexture("assets/Botones/fondoPresionarBoton.png"); 				
+					
+					pregunta = new Label("Deseas regresar a la\nanterior pregunta?" , BaseGame.labelStyle);				
+					pregunta.setFontScale(0.5f);				
+					
+										
+					uiTable.add(pregunta).colspan(2);
+					uiTable.row().pad(30, 0, 0, 10);				
+					uiTable.add(botonSi);				
+					uiTable.add(botonNo);	
+					
+					modoBotonSi = "Atras";
+					modoBotonNo = "Atras";				
+					
+					uiStage.addActor(uiTable);		
+				}						
+			}
+		});		
+		
+		// Avanzar de nivel cuando se abre el cofre
+		
+		incognita.addListener(new ClickListener(Buttons.LEFT){
+			// Evento click
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (incognita.getCofreAbierto()) {
+					incognita.abrirCofreTablero();				
+					
+					fondoPulsarBoton = new BaseActor(0,0,uiStage);
+					fondoPulsarBoton.loadTexture("assets/Botones/fondoPresionarBoton.png");
+					fondoPulsarBoton.setColor(1, 1, 1, 0);
+					fondoPulsarBoton.addAction(Actions.fadeIn(1f));
+					
+					if (numeroTablero < tablerosTotales) {
+						pregunta = new Label("Felicidades, lo has conseguido.\n   Quieres avanzar de nivel?" , BaseGame.labelStyle);				
+						pregunta.setFontScale(0.5f);				
+											
+						uiTable.add(pregunta).colspan(2);
+						uiTable.setColor(1,1,1,0);
+						uiTable.addAction(Actions.fadeIn(2f));
+						uiTable.row().pad(30, 0, 0, 10);				
+						uiTable.add(botonSi);				
+						uiTable.add(botonNo);
+						
+						modoBotonSi = "Avanzar";
+						modoBotonNo = "Avanzar";	
+						
+						uiStage.addActor(uiTable);		
+						// uiTable.row().pad(30, 0, 0, 10);				
+					}
+					
+					else {
+						pregunta = new Label("Vas a recoger la llave?" , BaseGame.labelStyle);				
+						pregunta.setFontScale(0.5f);
+						
+						BaseActor llave = new BaseActor(0,0, uiStage);
+						llave.loadTexture("assets/llave.png");
+						
+						uiTable.add(llave).colspan(2);
+						uiTable.row();
+						uiTable.add(pregunta).colspan(2);
+						uiTable.setColor(1,1,1,0);
+						uiTable.addAction(Actions.fadeIn(2f));
+						uiTable.row().pad(30, 0, 0, 10);				
+						uiTable.add(botonSi);				
+						uiTable.add(botonNo);
+						
+						modoBotonSi = "RecogerLlave";
+						modoBotonNo = "RecogerLlave";
+						
+						
+						
+						uiStage.addActor(uiTable);
+					}
+					
+				}
+			}				
+			
+			 
+		});
+		
+		
+		
+		
+			
+	}	
+	
+	/* -----------------------------------------------------------------------------------------------------------------
+	 * Fin del initialize
+	 */
 	
 	
 	public void resetTablero() {
@@ -451,6 +763,10 @@ public class Minijuego extends BaseScreen{
 		mainCamera.viewportHeight = 160;
 		mainCamera.position.x= 104;
 		mainCamera.position.y= 80;	
+		
+		if (this.numeroTablero == 1) {			
+			botonAtras.setColor(1,1,1,0.1f);
+		}
 		
 		// Verificamos si las cartas coinciden
 		try {
@@ -492,9 +808,9 @@ public class Minijuego extends BaseScreen{
 		
 		elementosZona = 0;
 		
-		// Veificar de que lado está la incognita a despejar
+		// Verificar de que lado está la incognita a despejar
 		for (BaseActor actor: BaseActors) {		
-			if (incognitaZonaIzquierda) {
+			if (izquierda) {
 				if (hitboxZonaIzquierda.overlaps(actor)) {				
 					elementosZona++;			
 				}
@@ -542,27 +858,22 @@ public class Minijuego extends BaseScreen{
 		return tma;
 	}
 	
+	
+	
 	@Override
 	public boolean scrolled(float arg0, float arg1) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 	
 	@Override
 	public boolean keyDown(int keycode)
     {               
-        
-        if ( keycode == Keys.B) {        	
-        	MathMaze.setActiveScreen(MathMaze.getLevelScreen());
-        }
-        
-        if ( keycode == Keys.R) {
-        	resetTablero();        	
-        }        
+               
         
         if ( keycode == Keys.L) {        		        
         	if(numeroTablero < tablerosTotales) {
-        		MathMaze.setActiveScreen(new Minijuego("A", numeroTablero+1, tablerosTotales, true));
+        		MazmorraPitagoras.setActiveScreen(new Minijuego(cofreUsado, letraTablero, numeroTablero+1, tablerosTotales));
         	}
         }  
         

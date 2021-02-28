@@ -56,6 +56,24 @@ public class BaseActor extends Actor{
 		deceleration = 0;
 	}
 	
+	public BaseActor(float x, float y)
+	{
+		// Constructor de la clase Actor 
+		super();
+		// La posicion dentro del escenario que va a ocupar el actor
+		setPosition(x,y);
+		// Añadir este actor al escenario
+				
+		// Vectores de velocidad y aceleracion
+		velocityVec = new Vector2(0,0);		
+		accelerationVec = new Vector2(0,0);
+		// La aceleración del actor
+		acceleration = 0;
+		// La máxima velocidad que alcanza el actor
+		maxSpeed = 1000;
+		// La desaceleración del actor
+		deceleration = 0;
+	}
 	
 /* ----------------------------------------------------------------------------------------------------- 
 	
@@ -360,6 +378,20 @@ public class BaseActor extends Actor{
 		cam.viewportHeight/2, worldBounds.height - cam.viewportHeight/2);		
 		cam.update();
 	}
+	
+	public void alignCamera(Stage s){
+		Camera cam = this.getStage().getCamera();
+		// La zona que está enfocando la cámara
+		Viewport v = this.getStage().getViewport();
+		// Para centrar la cámara en el actor. Coordenada 0 porque se está filmando un plano
+		cam.position.set( this.getX() + this.getOriginX(), this.getY() + this.getOriginY(), 0 );
+		// Limitar el área de movimiento de la cámara
+		cam.position.x = MathUtils.clamp(cam.position.x,
+		cam.viewportWidth/2, worldBounds.width - cam.viewportWidth/2);
+		cam.position.y = MathUtils.clamp(cam.position.y,
+		cam.viewportHeight/2, worldBounds.height - cam.viewportHeight/2);		
+		cam.update();
+	}
 /* ----------------------------------------------------------------------------------------------------- 
 	
 	Otros métodos
@@ -427,6 +459,8 @@ public class BaseActor extends Actor{
 		setWorldBounds( ba.getWidth(), ba.getHeight() );
 	}
 	
+	
+	
 	/* Para que el actor no se salga de los límites del mapa
 	 */
 	public void boundToWorld(){
@@ -477,5 +511,17 @@ public class BaseActor extends Actor{
 		}
 	}
 	
+	public boolean isWithinDistance(float distance, BaseActor other) {
+		Polygon poly1 = this.getBoundaryPolygon();
+		float scaleX = (this.getWidth() + 2 * distance) / this.getWidth();
+		float scaleY = (this.getHeight() + 2 * distance) / this.getHeight();
+		poly1.setScale(scaleX, scaleY);
+		Polygon poly2 = other.getBoundaryPolygon();
+	
+		// initial test to improve performance
+		if ( !poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()) )
+			return false;
+		return Intersector.overlapConvexPolygons( poly1, poly2 );
+		}
 
 }

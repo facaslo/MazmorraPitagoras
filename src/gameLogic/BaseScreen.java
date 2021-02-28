@@ -12,34 +12,55 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.*;
 
+import gameActors.Cofre;
+
 
 public abstract class BaseScreen implements Screen, InputProcessor{
 	protected Stage mainStage;
-	protected Stage uiStage;		
-	public OrthographicCamera gameCamera;
-	private Viewport gameViewport;
+	protected Stage uiStage;
+	protected Stage uiStageNivel;	
+	protected OrthographicCamera gameCamera;
+	protected OrthographicCamera uiCamera;
+	protected Viewport gameViewport;
+	protected Viewport uiPort;
 	 
-	private float width;
-	private float height;
-	public String letraTablero;
-	public int numeroTablero;
-	public int tablerosTotales;
-	public boolean izquierda;
+	protected float width;
+	protected float height;
+	protected String letraTablero;
+	protected int numeroTablero;
+	protected int tablerosTotales;
+	protected Cofre cofreUsado;
+	
+	protected Table uiTable;
+	protected boolean isPaused;
 	
 	
 	
-	public BaseScreen(String letraTab, int noTablero, int tabTotales, boolean izq)	{
+	public BaseScreen(Cofre cof, String letraTab, int noTablero, int tabTotales)	{
 		
 		letraTablero = letraTab;
 		numeroTablero = noTablero; 
-		tablerosTotales = tabTotales;
-		izquierda = izq;
+		tablerosTotales = tabTotales;	
+		cofreUsado = cof;
+		
 		width = 208;
 		height = 160;
+		
 		gameCamera = new OrthographicCamera();
 		gameViewport = new FitViewport(width, height , gameCamera);	
+		
+		uiCamera = new OrthographicCamera();
+		uiPort = new FitViewport(width, height , uiCamera);	
+		
+		
 		mainStage = new Stage(gameViewport);
 		uiStage = new Stage(gameViewport);	
+		uiStageNivel = new Stage(uiPort);		
+		
+		uiTable = new Table();
+		uiTable.setFillParent(true);
+		
+		
 		initialize();		
 	}	
 	
@@ -49,18 +70,23 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 	
 	@Override
 	public void render(float dt){
+		if (isPaused) 
+	        dt = 0;
 		uiStage.act(dt);
 		mainStage.act(dt);
+		uiStageNivel.act(dt);
 		update(dt);		
 		Gdx.gl.glClearColor(0,0,0,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);		
 		mainStage.draw();
-		uiStage.draw();		
+		uiStage.draw();	
+		uiStageNivel.draw();
 	}
 	
 		
 	public void resize(int width, int height) { 
-		gameViewport.update(width, height);
+		gameViewport.update(width, height, false);
+		uiPort.update(width, height, true);
 	}
 	
 	public void pause() { }
@@ -72,6 +98,7 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 		im.addProcessor(this);
 		im.addProcessor(uiStage);
 		im.addProcessor(mainStage);
+		im.addProcessor(uiStageNivel);
 	}
 	// show corre cuando se cambia la pantalla
 	public void hide() { 
@@ -79,10 +106,11 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 		im.removeProcessor(this);
 		im.removeProcessor(uiStage);
 		im.removeProcessor(mainStage);
+		im.removeProcessor(uiStageNivel);
 	}
 	
 	// Verificar si se ha dado un evento de click
-		public boolean isTouchDownEvent(Event e){
+	public boolean isTouchDownEvent(Event e){
 	    	return (e instanceof InputEvent) && ((InputEvent)e).getType().equals(Type.touchDown);
 	}
 	
@@ -105,7 +133,7 @@ public abstract class BaseScreen implements Screen, InputProcessor{
 	{ return false; }
 
 
-
+	
 
 }
 

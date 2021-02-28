@@ -4,9 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 public class Jugador extends BaseActor{
+	private static int numeroLlaves;
+	private static int numeroLlavesFrameAnterior;
+	private static boolean numeroLlavesCambio;
 		
 	public Jugador(float x, float y , Stage s) {
 		super(x,y,s);
+		
+		numeroLlaves = 0;
+		numeroLlavesFrameAnterior = 0;
+		numeroLlavesCambio = false;
 		
 		
 		String[] filenames = {"assets/character_sprites/Knight-Standard/Knight_Idle_1.png", 
@@ -66,6 +73,11 @@ public class Jugador extends BaseActor{
 	@Override
 	public void act(float dt){
 		super.act( dt );
+		if ((numeroLlavesFrameAnterior != numeroLlaves))
+			numeroLlavesCambio = true;
+		else 
+			numeroLlavesCambio = false;
+		
 		
 		// Para verificar el input del usuario
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
@@ -100,6 +112,31 @@ public class Jugador extends BaseActor{
 		
 		
 		alignCamera();
+		
+		numeroLlavesFrameAnterior = numeroLlaves;
+		
+	}
+	
+	
+	public static int getNumeroLlaves() {
+		return numeroLlaves;
+	}
+	
+	public static void setNumeroLlaves(int valor) {
+		numeroLlaves = valor;
+	}
+	
+	public static void setNumeroLlavesFrameAnterior(int valor) {
+		numeroLlavesFrameAnterior = valor;
+	}
+	
+	
+	public static boolean getNumeroLlavesCambio() {
+		return numeroLlavesCambio;
+	}
+	
+	public static void setNumeroLlavesCambio(boolean valor) {
+		numeroLlavesCambio = false;
 	}
 	
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="13" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="28">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="13" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="30">
  <tileset firstgid="1" name="incognita" tilewidth="16" tileheight="16" tilecount="3" columns="3">
   <image source="Boxes/Incognita/incognita.png" width="48" height="16"/>
  </tileset>
@@ -25,9 +25,19 @@
     <property name="name" value="botonLimpiarCartas"/>
    </properties>
   </object>
-  <object id="22" x="183.909" y="4.56676" width="15" height="15">
+  <object id="22" x="188.273" y="4.65767" width="15" height="15">
+   <properties>
+    <property name="name" value="botonCerrar"/>
+   </properties>
+  </object>
+  <object id="28" x="170.115" y="4.66" width="15" height="15">
    <properties>
     <property name="name" value="botonReinicio"/>
+   </properties>
+  </object>
+  <object id="29" x="152.25" y="4.66" width="15" height="15">
+   <properties>
+    <property name="name" value="botonAtras"/>
    </properties>
   </object>
  </objectgroup>
@@ -35,14 +45,9 @@
   <properties>
    <property name="name" value="levelLabel"/>
   </properties>
-  <object id="1" x="16.6818" y="39.5682" width="16" height="16">
+  <object id="1" x="24.1818" y="46.0682" width="16" height="16">
    <properties>
     <property name="name" value="incognita"/>
-   </properties>
-  </object>
-  <object id="2" x="64" y="64" width="16" height="16">
-   <properties>
-    <property name="name" value="numeropositivo1"/>
    </properties>
   </object>
   <object id="7" x="124.818" y="40.75" width="16" height="16">
@@ -85,19 +90,14 @@
     <property name="name" value="cartaElegida2"/>
    </properties>
   </object>
-  <object id="23" x="63.75" y="36.25" width="16" height="16">
+  <object id="23" x="64.75" y="46.5" width="16" height="16">
    <properties>
     <property name="name" value="cero"/>
    </properties>
   </object>
-  <object id="25" x="70.2443" y="8.13068" width="68.8182" height="8.90909">
+  <object id="25" x="72.2937" y="8.31699" width="65.8373" height="8.90909">
    <properties>
     <property name="name" value="levelLabel"/>
-   </properties>
-  </object>
-  <object id="27" x="25.4545" y="67.0909" width="16" height="16">
-   <properties>
-    <property name="name" value="numeropositivo2"/>
    </properties>
   </object>
  </objectgroup>
